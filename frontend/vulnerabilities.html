@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Findings - SecureScan</title>
+<link rel="stylesheet" href="assets/css/main.css?v=soc4">
+</head>
+<body>
+<div class="app-shell">
+  <div class="app-main">
+    <header class="app-topbar" id="app-topbar"></header>
+    <main class="main-content">
+      <h1>Findings</h1>
+      <p class="hud-kicker">Threat inventory</p>
+      <p class="text-dim mb-16" id="findings-subtitle">Vulnerabilities, secrets, and dependency issues for the selected project or scan.</p>
+      <p class="mb-16" id="back-to-editor-wrap" style="display:none;"><a id="back-to-editor-link" class="btn btn-sm" href="#">Back to Editor</a></p>
+      <p class="text-dim mb-16" id="findings-scope" style="display:none;"></p>
+      <div class="card mb-24" id="compare-card" style="display:none;">
+        <div class="card-header"><h3>Vs last scan</h3></div>
+        <p class="text-dim" id="compare-summary" style="font-size:13.5px;"></p>
+        <div class="stat-grid mt-16" id="compare-stats" style="grid-template-columns:repeat(3,1fr);"></div>
+        <div class="pill-select mt-16 mb-8">
+          <div class="pill active" data-diff="new">New</div>
+          <div class="pill" data-diff="still_open">Still open</div>
+          <div class="pill" data-diff="resolved">Resolved</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Severity</th><th>Title</th><th>File</th><th>Line</th></tr></thead>
+            <tbody id="compare-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="pill-select mb-16">
+        <div class="pill active" data-category="findings">Findings</div>
+        <div class="pill" data-category="secrets">Secrets</div>
+        <div class="pill" data-category="dependencies">Dependencies</div>
+      </div>
+
+      <div class="table-toolbar">
+        <input id="search-input" placeholder="Search title, file, rule ID, CWE..." style="max-width:260px;">
+        <select id="filter-project" style="max-width:200px;"><option value="">All Projects</option></select>
+        <select id="filter-severity" style="max-width:150px;"><option value="">All Severities</option><option>CRITICAL</option><option>HIGH</option><option>MEDIUM</option><option>LOW</option><option>INFO</option></select>
+        <select id="filter-status" style="max-width:160px;"><option value="">All Statuses</option><option value="open">Open</option><option value="resolved">Resolved</option><option value="ignored">Ignored</option><option value="false_positive">False Positive</option></select>
+        <select id="filter-category" style="max-width:180px;"><option value="">All Categories</option></select>
+        <div class="spacer"></div>
+        <span class="text-dim" id="result-count" style="font-size:13px;"></span>
+      </div>
+
+      <div class="table-wrap">
+        <table id="findings-table">
+          <thead><tr><th>Severity</th><th>Title</th><th>Category</th><th>Scanner</th><th>File</th><th>Line</th><th>Status</th><th>First Seen</th></tr></thead>
+          <tbody id="findings-body"><tr><td colspan="8" class="text-dim">Loading...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </main>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="detail-modal">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-header"><h3 id="detail-title">Finding</h3><button class="icon-btn" id="close-detail">✕</button></div>
+    <div class="modal-body" id="detail-body"></div>
+    <div class="modal-footer">
+      <button class="btn" type="button" id="detail-open-editor">Open in editor</button>
+      <button class="btn" type="button" id="detail-mark-fixed">Mark fixed</button>
+      <button class="btn" type="button" id="detail-rescan-file">Rescan file</button>
+      <button class="btn" type="button" id="detail-rescan-folder">Rescan folder</button>
+      <select id="detail-status-select" style="max-width:180px;">
+        <option value="open">Open</option><option value="resolved">Resolved</option><option value="ignored">Ignored</option><option value="false_positive">False Positive</option>
+      </select>
+      <button class="btn btn-primary" id="detail-save-status">Update Status</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/notifications.js"></script>
+<script src="assets/js/auth.js?v=net1"></script>
+<script src="assets/js/vulnerabilities.js?v=7"></script>
+</body>
+</html>

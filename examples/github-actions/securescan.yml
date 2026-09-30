@@ -1,0 +1,69 @@
+name: SecureScan
+
+# Copy this file to .github/workflows/securescan.yml in the repository you want scanned.
+# Repo secrets:
+#   SECURESCAN_URL          API origin, e.g. https://scan.example.com
+#   SECURESCAN_TOKEN        Project CI token from SecureScan → Project → Settings
+#   SECURESCAN_PROJECT_ID   Numeric project id
+# Optional:
+#   SECURESCAN_FAIL_ON      critical | high | medium | low | never  (default: high)
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  securescan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger SecureScan and wait
+        env:
+          SECURESCAN_URL: ${{ secrets.SECURESCAN_URL }}
+          SECURESCAN_TOKEN: ${{ secrets.SECURESCAN_TOKEN }}
+          SECURESCAN_PROJECT_ID: ${{ secrets.SECURESCAN_PROJECT_ID }}
+          SECURESCAN_FAIL_ON: ${{ secrets.SECURESCAN_FAIL_ON }}
+          GITHUB_REF: ${{ github.ref }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          python3 << 'PY'
+          import json, os, time, urllib.request
+
+          base = os.environ["SECURESCAN_URL"].rstrip("/")
+          token = os.environ["SECURESCAN_TOKEN"]
+          pid = os.environ["SECURESCAN_PROJECT_ID"]
+          fail_on = os.environ.get("SECURESCAN_FAIL_ON") or "high"
+          headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+          body = json.dumps({
+              "ref": os.environ.get("GITHUB_REF", ""),
+              "sha": os.environ.get("GITHUB_SHA", ""),
+              "fail_on": fail_on,
+          }).encode()
+          req = urllib.request.Request(
+              f"{base}/api/ci/projects/{pid}/scan/", data=body, headers=headers, method="POST"
+          )
+          with urllib.request.urlopen(req, timeout=60) as resp:
+              payload = json.load(resp)["data"]
+          scan_id = payload["scan"]["id"]
+          print("queued scan", scan_id)
+          for _ in range(180):
+              st = urllib.request.Request(
+                  f"{base}/api/ci/projects/{pid}/scans/{scan_id}/?fail_on={fail_on}",
+                  headers={"Authorization": f"Bearer {token}"},
+              )
+              with urllib.request.urlopen(st, timeout=60) as resp:
+                  data = json.load(resp)["data"]
+              status = data["scan"]["status"]
+              print("status", status)
+              if status in ("completed", "failed", "cancelled"):
+                  if not data.get("ok"):
+                      raise SystemExit(
+                          f"SecureScan gate failed ({status}): "
+                          f"score={data['scan'].get('security_score')} "
+                          f"findings={data['scan'].get('total_findings')}"
+                      )
+                  print("SecureScan passed")
+                  break
+              time.sleep(5)
+          else:
+              raise SystemExit("Timed out waiting for SecureScan")
+          PY

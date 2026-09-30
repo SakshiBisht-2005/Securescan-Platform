@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scanner - SecureScan</title>
+<link rel="stylesheet" href="assets/css/main.css?v=soc4">
+</head>
+<body>
+<div class="app-shell">
+  <div class="app-main">
+    <header class="app-topbar" id="app-topbar"></header>
+    <main class="main-content">
+      <p class="hud-kicker">Analysis console</p>
+      <h1 id="scanner-title">Security Scanner</h1>
+      <p class="text-dim mb-24">Configure and run a scan for <strong id="project-name-label">...</strong></p>
+
+      <div class="stat-grid" style="grid-template-columns:1.3fr 1fr; align-items:start;">
+        <div class="card" id="config-card">
+          <h3>Scan Configuration</h3>
+          <div class="checkbox-row mt-16"><input type="checkbox" id="opt-sast" checked><label for="opt-sast">SAST (Static Application Security Testing)</label></div>
+          <div class="checkbox-row"><input type="checkbox" id="opt-sca" checked><label for="opt-sca">SCA (Dependency Vulnerabilities)</label></div>
+          <div class="checkbox-row"><input type="checkbox" id="opt-secrets" checked><label for="opt-secrets">Secret Detection</label></div>
+          <div class="checkbox-row"><input type="checkbox" id="opt-iac" checked><label for="opt-iac">Infrastructure as Code</label></div>
+          <div class="checkbox-row"><input type="checkbox" id="opt-container" checked><label for="opt-container">Container Configuration</label></div>
+
+          <div class="form-group mt-16"><label for="opt-branch">Branch</label><input id="opt-branch" placeholder="main"></div>
+          <div class="form-group"><label for="opt-exclusions">Additional exclusions (one per line)</label><textarea id="opt-exclusions" rows="2"></textarea></div>
+          <div class="form-group">
+            <label for="opt-threshold">Severity threshold (optional)</label>
+            <select id="opt-threshold"><option value="">All severities</option><option>CRITICAL</option><option>HIGH</option><option>MEDIUM</option><option>LOW</option><option>INFO</option></select>
+          </div>
+          <div class="checkbox-row"><input type="checkbox" id="opt-report" checked><label for="opt-report">Generate report automatically</label></div>
+
+          <button class="btn btn-primary btn-block mt-16" id="start-scan-btn">Start Security Scan</button>
+        </div>
+
+        <div class="card">
+          <h3>Live Progress</h3>
+          <div id="progress-idle" class="text-dim mt-16">No scan running. Configure options and click "Start Security Scan".</div>
+          <div id="progress-active" style="display:none;">
+            <div class="progress-track mt-16"><div class="progress-fill" id="progress-fill" style="width:0%;"></div></div>
+            <div class="flex justify-between mt-8"><span class="text-dim" id="progress-stage-label">Preparing files</span><span id="progress-percent">0%</span></div>
+            <div class="scan-stage-list" id="stage-list"></div>
+          </div>
+          <div id="progress-done" style="display:none;" class="mt-16">
+            <div class="text-dim">Scan complete. Your project files were not modified.</div>
+            <a class="btn btn-primary btn-block mt-16" id="view-results-btn" href="#">View Results</a>
+            <a class="btn btn-block mt-8" id="back-to-editor-btn" href="#">Back to Editor</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/notifications.js"></script>
+<script src="assets/js/auth.js?v=net1"></script>
+<script src="assets/js/websocket.js"></script>
+<script src="assets/js/scanner.js?v=3"></script>
+</body>
+</html>

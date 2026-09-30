@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - SecureScan</title>
+<link rel="stylesheet" href="assets/css/main.css?v=soc4">
+</head>
+<body>
+<div class="app-shell">
+  <div class="app-main">
+    <header class="app-topbar" id="app-topbar"></header>
+    <main class="main-content">
+      <h1>Admin Dashboard</h1>
+      <p class="hud-kicker">Platform control</p>
+      <p class="text-dim mb-24">System-wide oversight: users, projects, scans, scanner status, and audit logs.</p>
+
+      <div class="stat-grid mb-24" id="admin-stats"></div>
+
+      <div class="pill-select mb-16">
+        <div class="pill active" data-tab="users">Users</div>
+        <div class="pill" data-tab="scanners">Scanner Status</div>
+        <div class="pill" data-tab="failed-scans">Failed Scans</div>
+        <div class="pill" data-tab="audit">Audit Log</div>
+      </div>
+
+      <div id="tab-users" class="admin-tab">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th></th></tr></thead>
+            <tbody id="users-body"><tr><td colspan="6" class="text-dim">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="tab-scanners" class="admin-tab" style="display:none;">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Scanner</th><th>Category</th><th>Availability</th></tr></thead>
+            <tbody id="scanners-body"><tr><td colspan="3" class="text-dim">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="tab-failed-scans" class="admin-tab" style="display:none;">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Scan</th><th>Project</th><th>Error</th><th>When</th></tr></thead>
+            <tbody id="failed-scans-body"><tr><td colspan="4" class="text-dim">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="tab-audit" class="admin-tab" style="display:none;">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>User</th><th>Action</th><th>Object</th><th>IP</th><th>When</th></tr></thead>
+            <tbody id="audit-body"><tr><td colspan="5" class="text-dim">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/notifications.js"></script>
+<script src="assets/js/auth.js?v=net1"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>

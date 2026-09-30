@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project - SecureScan</title>
+<link rel="stylesheet" href="assets/css/main.css?v=soc4">
+</head>
+<body>
+<div class="app-shell">
+  <div class="app-main">
+    <header class="app-topbar" id="app-topbar"></header>
+    <main class="main-content">
+      <div class="flex justify-between items-center mb-16">
+        <div>
+          <div class="text-faint" style="font-size:13px;"><a href="projects.html">Projects</a> / <span id="project-name-crumb">...</span></div>
+          <h1 id="project-title" style="margin-top:4px;">Loading...</h1>
+        </div>
+        <div class="flex gap-8">
+          <a class="btn" id="open-editor-btn" href="#">Open Editor</a>
+          <a class="btn btn-primary" id="run-scan-btn" href="#">Run Scan</a>
+        </div>
+      </div>
+
+      <div class="stat-grid mb-24" id="project-stats"></div>
+
+      <div class="pill-select mb-16">
+        <div class="pill active" data-tab="overview">Overview</div>
+        <div class="pill" data-tab="upload">Upload / Import</div>
+        <div class="pill" data-tab="scans">Scan History</div>
+        <div class="pill" data-tab="team">Team</div>
+        <div class="pill" data-tab="settings">Settings</div>
+      </div>
+
+      <div id="tab-overview" class="tab-panel">
+        <div class="card"><div class="card-header"><h3>Latest Findings by Category</h3></div><div id="category-breakdown">Loading...</div></div>
+      </div>
+
+      <div id="tab-upload" class="tab-panel" style="display:none;">
+        <div class="stat-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="card">
+            <h3>Upload ZIP</h3>
+            <p class="text-dim" style="font-size:13.5px;">Upload a .zip of your source code. Files are extracted safely (path-traversal and zip-bomb protected).</p>
+            <input type="file" id="zip-file" accept=".zip" class="mt-16">
+            <button class="btn btn-primary mt-16" id="upload-btn">Upload &amp; Index</button>
+          </div>
+          <div class="card">
+            <h3>Import from Git</h3>
+            <div class="form-group mt-16"><label for="repo-url">Repository URL (https://)</label><input id="repo-url" placeholder="https://github.com/org/repo.git"></div>
+            <div class="form-group"><label for="repo-branch">Branch</label><input id="repo-branch" value="main"></div>
+            <button class="btn btn-primary" id="import-btn">Clone &amp; Index</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-scans" class="tab-panel" style="display:none;">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Type</th><th>Trigger</th><th>Status</th><th>Score</th><th>Findings</th><th>Duration</th><th>When</th><th></th></tr></thead>
+            <tbody id="scans-body"><tr><td colspan="9" class="text-dim">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="tab-team" class="tab-panel" style="display:none;">
+        <div class="card" style="max-width:720px;">
+          <h3>Team</h3>
+          <p class="text-dim" style="font-size:13.5px;">Owner, project admin, analyst, and developer. Analysts can view and scan. Developers can edit files and scan. Admins can invite people and manage CI.</p>
+          <p class="help-text" id="team-role-label"></p>
+          <div id="team-invite-form" class="mt-16">
+            <div class="flex gap-8 items-center">
+              <input id="invite-email" type="email" placeholder="teammate@example.com" style="flex:1;">
+              <select id="invite-role" style="max-width:180px;">
+                <option value="developer">Developer</option>
+                <option value="analyst">Analyst</option>
+                <option value="admin">Project admin</option>
+              </select>
+              <button class="btn btn-primary" type="button" id="invite-btn">Invite</button>
+            </div>
+            <p class="help-text" id="invite-debug" style="display:none;"></p>
+          </div>
+          <div class="table-wrap mt-16">
+            <table>
+              <thead><tr><th>Person</th><th>Role</th><th></th></tr></thead>
+              <tbody id="team-body"><tr><td colspan="3" class="text-dim">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-settings" class="tab-panel" style="display:none;">
+        <div class="card" style="max-width:600px;">
+          <h3>Project Settings</h3>
+          <div class="form-group mt-16"><label for="s-name">Name</label><input id="s-name"></div>
+          <div class="form-group"><label for="s-description">Description</label><textarea id="s-description" rows="3"></textarea></div>
+          <div class="form-group"><label for="s-exclusions">Exclusion patterns (one per line, glob)</label><textarea id="s-exclusions" rows="3" placeholder="*.min.js&#10;vendor/*"></textarea></div>
+          <label class="flex items-center gap-8 mt-16" style="cursor:pointer;">
+            <input type="checkbox" id="s-weekly-scan">
+            <span>Weekly scheduled scan (Sundays 02:00 UTC, via Celery beat)</span>
+          </label>
+          <button class="btn btn-primary mt-16" id="save-settings-btn">Save Changes</button>
+          <hr style="border-color:var(--border); margin:24px 0;">
+          <h3>CI / GitHub</h3>
+          <p class="text-dim" style="font-size:13.5px;">Scan on every push with a GitHub Action, or a GitHub webhook. Same token for both.</p>
+          <p class="help-text" id="ci-token-status">No CI token yet.</p>
+          <div class="flex gap-8 mt-16">
+            <button class="btn btn-primary" type="button" id="ci-token-btn">Generate CI token</button>
+          </div>
+          <div id="ci-token-once" class="dev-link-box mt-16"></div>
+          <div class="form-group mt-16">
+            <label>GitHub Action (repo secrets: SECURESCAN_URL, SECURESCAN_TOKEN, SECURESCAN_PROJECT_ID)</label>
+            <textarea id="ci-workflow" rows="12" readonly class="mono" style="width:100%;"></textarea>
+          </div>
+          <p class="help-text" id="ci-webhook-url"></p>
+          <hr style="border-color:var(--border); margin:24px 0;">
+          <button class="btn btn-danger" id="delete-project-btn">Delete Project</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/notifications.js"></script>
+<script src="assets/js/auth.js?v=net1"></script>
+<script src="assets/js/project-detail.js?v=4"></script>
+</body>
+</html>

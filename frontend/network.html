@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network lab - SecureScan</title>
+<link rel="stylesheet" href="assets/css/main.css?v=soc4">
+</head>
+<body>
+<div class="app-shell">
+  <div class="app-main">
+    <header class="app-topbar" id="app-topbar"></header>
+    <main class="main-content">
+      <p class="hud-kicker">Network mode</p>
+      <h1 class="text-3d">Network lab</h1>
+      <p class="text-dim mb-24">Tools for your own session, DNS, this machine’s listening ports, and HTTP security headers on sites you operate. Code scanning stays in Code mode.</p>
+      <div class="card mb-24">
+        <strong>Scope.</strong> These checks are for assets you own. Private and local destinations are blocked on URL fetches. There is no internet-wide port scan, packet capture, or exploit tooling.
+      </div>
+
+      <div class="net-grid">
+        <div class="card">
+          <div class="card-header"><h3>Your session</h3></div>
+          <p class="text-dim mb-16">Address your browser used to reach this app.</p>
+          <div id="self-result" class="net-result text-dim">Loading…</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>Classify IP</h3></div>
+          <p class="text-dim mb-16">Public, private, loopback — no packets sent.</p>
+          <form id="ip-form" class="mb-16">
+            <input class="input" name="ip" placeholder="8.8.8.8" autocomplete="off">
+            <button class="btn btn-primary mt-16" type="submit">Classify</button>
+          </form>
+          <div id="ip-result" class="net-result"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>DNS lookup</h3></div>
+          <p class="text-dim mb-16">A / AAAA records and reverse names.</p>
+          <form id="dns-form" class="mb-16">
+            <input class="input" name="host" placeholder="example.com" autocomplete="off">
+            <button class="btn btn-primary mt-16" type="submit">Resolve</button>
+          </form>
+          <div id="dns-result" class="net-result"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>This machine</h3></div>
+          <p class="text-dim mb-16">Common TCP ports on 127.0.0.1 only.</p>
+          <button class="btn btn-primary mb-16" id="ports-btn" type="button">Check local ports</button>
+          <div id="ports-result"></div>
+        </div>
+      </div>
+
+      <div class="card mt-24">
+        <div class="card-header"><h3>HTTP security headers</h3></div>
+        <p class="text-dim mb-16">Fetch headers from a public URL you operate. Confirm ownership first.</p>
+        <form id="headers-form">
+          <input class="input mb-16" name="url" placeholder="https://example.com" autocomplete="off">
+          <label class="text-dim" style="display:flex;gap:8px;align-items:flex-start;">
+            <input type="checkbox" name="confirm_owned">
+            <span>I operate this URL and am authorized to request its headers.</span>
+          </label>
+          <button class="btn btn-primary mt-16" type="submit">Check headers</button>
+        </form>
+        <div id="headers-result" class="mt-16"></div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/notifications.js"></script>
+<script src="assets/js/auth.js?v=net1"></script>
+<script src="assets/js/network.js"></script>
+</body>
+</html>

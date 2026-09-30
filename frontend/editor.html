@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Editor - SecureScan</title>
+<link rel="stylesheet" href="assets/css/main.css?v=soc4">
+<style>html,body{height:100%; overflow:hidden;}</style>
+</head>
+<body>
+<div class="app-shell editor-app">
+  <header class="app-topbar" id="app-topbar"></header>
+  <div class="editor-toolbar flex items-center gap-8">
+    <strong id="editor-project-name">Loading...</strong>
+    <div class="spacer" style="flex:1;"></div>
+    <input id="global-search" placeholder="Search in project..." style="max-width:240px;">
+    <button class="btn btn-sm" id="scan-file-btn">Scan Current File</button>
+    <button class="btn btn-sm btn-primary" id="scan-project-btn">Scan Project</button>
+    <button class="btn btn-sm" id="open-findings-btn">View Findings</button>
+    <button class="icon-btn" id="editor-theme-toggle" title="Toggle editor theme">🌓</button>
+  </div>
+  <div class="editor-shell">
+    <div class="editor-panel file-explorer">
+      <div class="flex justify-between items-center mb-8">
+        <strong style="font-size:12.5px; text-transform:uppercase; color:var(--text-dim);">Explorer</strong>
+        <div class="flex gap-8">
+          <button class="icon-btn" id="new-file-btn" title="New File" style="width:26px;height:26px;">📄</button>
+          <button class="icon-btn" id="new-folder-btn" title="New Folder" style="width:26px;height:26px;">📁</button>
+        </div>
+      </div>
+      <div id="file-tree"></div>
+    </div>
+    <div class="editor-panel editor-main">
+      <div class="editor-tabs" id="editor-tabs"></div>
+      <div id="monaco-container"></div>
+    </div>
+    <div class="editor-panel findings-panel">
+      <strong style="font-size:12.5px; text-transform:uppercase; color:var(--text-dim);">Findings in this file</strong>
+      <div id="editor-scan-status" class="editor-scan-status" hidden>
+        <div class="flex justify-between items-center">
+          <strong style="font-size:12.5px;">Scan in progress</strong>
+          <span id="editor-scan-percent">0%</span>
+        </div>
+        <div class="progress-track mt-8"><div class="progress-fill" id="editor-scan-fill" style="width:0%"></div></div>
+        <div class="text-dim" id="editor-scan-stage" style="font-size:12px;margin-top:6px;">Preparing files</div>
+      </div>
+      <div id="file-findings" class="mt-16 text-dim" style="font-size:13px;">Open a file to see related findings.</div>
+    </div>
+    <div class="editor-bottom" id="editor-output">
+      <div class="editor-bottom-header">Activity</div>
+      <div id="output-log" class="editor-output-log">This panel logs editor actions (open, save, search). It does not run your program — SecureScan never executes project code. Use Scan Project to analyze it.</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="new-entry-modal">
+  <div class="modal">
+    <div class="modal-header"><h3 id="new-entry-title">New File</h3><button class="icon-btn" id="close-new-entry">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label for="new-entry-path">Path (relative to project root)</label><input id="new-entry-path" placeholder="src/new_file.py"></div>
+    </div>
+    <div class="modal-footer"><button class="btn" id="cancel-new-entry">Cancel</button><button class="btn btn-primary" id="confirm-new-entry">Create</button></div>
+  </div>
+</div>
+
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/notifications.js"></script>
+<script src="assets/js/auth.js?v=net1"></script>
+<script src="assets/js/websocket.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.49.0/min/vs/loader.min.js"></script>
+<script src="assets/js/editor.js?v=8"></script>
+</body>
+</html>

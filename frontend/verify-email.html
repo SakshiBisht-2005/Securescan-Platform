@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify Email - SecureScan</title>
+<link rel="stylesheet" href="assets/css/main.css?v=soc3">
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-card" style="text-align:center;">
+    <h2 id="verify-heading">Verifying your email...</h2>
+    <p class="text-dim" id="verify-message"></p>
+    <form id="resend-form" class="mt-16" style="display:none;text-align:left;">
+      <div class="form-group"><label for="resend-email">Email</label><input id="resend-email" type="email" required></div>
+      <button class="btn btn-primary btn-block" type="submit" id="resend-btn">Resend verification email</button>
+    </form>
+    <div id="dev-link-box" class="dev-link-box">
+      <p class="text-dim" style="margin-bottom:8px;">SMTP is not sending yet. Open this debug link:</p>
+      <a id="dev-verify-link" href="#">Verify email</a>
+    </div>
+    <a href="login.html" class="btn btn-primary mt-16">Go to Log In</a>
+  </div>
+</div>
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/notifications.js"></script>
+<script>
+function showResend() {
+  document.getElementById('resend-form').style.display = 'block';
+}
+document.getElementById('resend-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('resend-btn');
+  btn.disabled = true;
+  try {
+    const data = await Api.post('/api/auth/verify-email/resend/', {
+      email: document.getElementById('resend-email').value.trim(),
+    });
+    if (data.email_sent) {
+      Toast.success('If that account is unverified, a new email is on its way.');
+    } else if (data.dev_verify_link) {
+      const box = document.getElementById('dev-link-box');
+      const a = document.getElementById('dev-verify-link');
+      a.href = data.dev_verify_link;
+      box.classList.add('show');
+      Toast.success('SMTP is not configured — use the link below.');
+    } else {
+      Toast.success(data.message);
+    }
+  } catch (err) {
+    Toast.error(err.message || 'Could not resend.');
+  } finally {
+    btn.disabled = false;
+  }
+});
+(async () => {
+  const token = Utils.getQueryParam('token');
+  const heading = document.getElementById('verify-heading');
+  const message = document.getElementById('verify-message');
+  if (!token) {
+    heading.textContent = 'Missing token';
+    message.textContent = 'Enter your email to request a new verification message.';
+    showResend();
+    return;
+  }
+  try {
+    await Api.post('/api/auth/verify-email/', { token });
+    heading.textContent = 'Email verified!';
+    message.textContent = 'Your email has been verified successfully.';
+  } catch (err) {
+    heading.textContent = 'Verification failed';
+    message.textContent = err.message || 'This link may be invalid or expired.';
+    showResend();
+  }
+})();
+</script>
+</body>
+</html>

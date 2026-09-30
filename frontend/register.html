@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account - SecureScan</title>
+<link rel="stylesheet" href="assets/css/main.css?v=soc3">
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-card tilt-3d">
+    <div class="logo-row"><img class="logo-3d" src="assets/img/securescan-shield-3d.png" alt="" width="28" height="28"> SecureScan</div>
+    <p class="hud-kicker">New operator</p>
+    <h2>Create account</h2>
+    <p class="text-dim mb-16">Start scanning your code for free.</p>
+    <form id="register-form">
+      <div class="form-row">
+        <div class="form-group"><label for="first_name">First name</label><input id="first_name"></div>
+        <div class="form-group"><label for="last_name">Last name</label><input id="last_name"></div>
+      </div>
+      <div class="form-group"><label for="username">Username</label><input id="username" required></div>
+      <div class="form-group"><label for="email">Email</label><input id="email" type="email" required></div>
+      <div class="form-group"><label for="organization">Organization (optional)</label><input id="organization"></div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" required>
+        <div class="help-text">At least 10 characters, with uppercase, lowercase, a digit, and a special character.</div>
+      </div>
+      <div class="form-group"><label for="password_confirm">Confirm password</label><input id="password_confirm" type="password" required></div>
+      <button class="btn btn-primary btn-block" type="submit" id="register-btn">Create Account</button>
+    </form>
+    <div class="mt-16" style="font-size:13.5px;">Already have an account? <a href="login.html" id="login-link">Log in</a></div>
+    <div id="dev-link-box" class="dev-link-box">
+      <p class="text-dim" style="margin-bottom:8px;">SMTP is not sending yet. Open this debug link to verify your email, then set EMAIL_HOST_USER and EMAIL_HOST_PASSWORD in backend/.env (see docs/EMAIL.md):</p>
+      <a id="dev-verify-link" href="#">Verify email</a>
+    </div>
+  </div>
+</div>
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/notifications.js"></script>
+<script>
+function loginAfterRegister() {
+  const next = Utils.getQueryParam('next');
+  return next ? 'login.html?next=' + encodeURIComponent(next) : 'login.html';
+}
+(function () {
+  const next = Utils.getQueryParam('next');
+  if (!next) return;
+  const link = document.getElementById('login-link');
+  if (link) link.href = 'login.html?next=' + encodeURIComponent(next);
+})();
+document.getElementById('register-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('register-btn');
+  btn.disabled = true; btn.textContent = 'Creating account...';
+  try {
+    const data = await Api.post('/api/auth/register/', {
+      first_name: document.getElementById('first_name').value,
+      last_name: document.getElementById('last_name').value,
+      username: document.getElementById('username').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      organization: document.getElementById('organization').value,
+      password: document.getElementById('password').value,
+      password_confirm: document.getElementById('password_confirm').value,
+    });
+    if (data.email_sent) {
+      Toast.success('Account created. Check your inbox for a verification email.');
+      setTimeout(() => location.href = loginAfterRegister(), 1600);
+    } else if (data.dev_verify_link) {
+      const box = document.getElementById('dev-link-box');
+      const a = document.getElementById('dev-verify-link');
+      a.href = data.dev_verify_link;
+      box.classList.add('show');
+      Toast.success('Account created. SMTP is not configured — use the verification link below.');
+      btn.disabled = false; btn.textContent = 'Create Account';
+    } else {
+      Toast.success('Account created. Ask an admin to configure SMTP, or check your inbox if it is already set.');
+      setTimeout(() => location.href = loginAfterRegister(), 1600);
+    }
+  } catch (err) {
+    Toast.error(err.message || 'Registration failed.');
+    btn.disabled = false; btn.textContent = 'Create Account';
+  }
+});
+</script>
+</body>
+</html>

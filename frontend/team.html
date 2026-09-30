@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team - SecureScan</title>
+<link rel="stylesheet" href="assets/css/main.css?v=soc4">
+</head>
+<body>
+<div class="app-shell">
+  <div class="app-main">
+    <header class="app-topbar" id="app-topbar"></header>
+    <main class="main-content">
+      <p class="hud-kicker">Collaboration</p>
+      <h1>Invite your team</h1>
+      <p class="text-dim mb-24">Each teammate uses <strong>their own account</strong> (the email you invite). Do not give them your username or password. If they log in as you, they are you — they will see every project you own.</p>
+
+      <div class="card mb-24">
+        <div class="card-header"><h3>How they join</h3></div>
+        <ol class="text-dim" style="margin:0;padding-left:1.2rem;line-height:1.7;">
+          <li>You pick a project role and send the email or copy the accept link.</li>
+          <li>They open the email link and <strong>choose their own password</strong> on that page. That signs them in. They must not use your username.</li>
+          <li>If they already registered with that email, they are added as soon as you invite (no extra click).</li>
+        </ol>
+      </div>
+
+      <div class="card mb-24">
+        <div class="card-header"><h3>What each project role can do</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>Sees</th>
+                <th>Can do</th>
+                <th>Cannot do</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Developer</td>
+                <td>Only projects they joined</td>
+                <td>View findings, edit files, run scans</td>
+                <td>Invite people, delete the project, change CI</td>
+              </tr>
+              <tr>
+                <td>Analyst</td>
+                <td>Only projects they joined</td>
+                <td>View findings and run scans</td>
+                <td>Edit files, invite people, delete the project</td>
+              </tr>
+              <tr>
+                <td>Project admin</td>
+                <td>Only projects they joined</td>
+                <td>Everything a developer can, plus invite/manage members and CI</td>
+                <td>Delete the project (owner only)</td>
+              </tr>
+              <tr>
+                <td>Owner (you)</td>
+                <td>Projects you created, plus any you were invited to</td>
+                <td>Full control, including delete</td>
+                <td>—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-dim mt-16" style="margin-bottom:0;">Sidebar <strong>Admin</strong> is a platform operator account, not the project-admin invite role. Invited admins do not get that page.</p>
+      </div>
+
+      <div id="pending-invites" class="mb-24"></div>
+      <div id="team-projects">Loading projects...</div>
+    </main>
+  </div>
+</div>
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/notifications.js"></script>
+<script src="assets/js/auth.js?v=net1"></script>
+<script src="assets/js/team.js"></script>
+</body>
+</html>

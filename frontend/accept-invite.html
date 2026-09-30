@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Join project - SecureScan</title>
+<link rel="stylesheet" href="assets/css/main.css?v=soc4">
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-card tilt-3d">
+    <div class="logo-row"><img class="logo-3d" src="assets/img/securescan-shield-3d.png" alt="" width="28" height="28"> SecureScan</div>
+    <p class="hud-kicker">Team invite</p>
+    <h2 id="invite-heading">Opening invite…</h2>
+    <p class="text-dim mb-16" id="invite-message">Checking the link from your email.</p>
+    <div id="invite-forms"></div>
+  </div>
+</div>
+<script src="assets/js/utils.js?v=invite1"></script>
+<script src="assets/js/api.js?v=invite1"></script>
+<script src="assets/js/notifications.js"></script>
+<script>
+(async function () {
+  const token = Utils.getQueryParam('token');
+  const heading = document.getElementById('invite-heading');
+  const message = document.getElementById('invite-message');
+  const forms = document.getElementById('invite-forms');
+
+  if (!token) {
+    heading.textContent = 'Missing invite';
+    message.textContent = 'This email link is incomplete.';
+    return;
+  }
+
+  let preview;
+  try {
+    preview = await Api.get('/api/auth/invites/preview/?token=' + encodeURIComponent(token));
+  } catch (e) {
+    heading.textContent = 'Invite not valid';
+    message.textContent = e.message || 'This link is expired or already used.';
+    return;
+  }
+
+  heading.textContent = 'Join ' + preview.project_name;
+  message.textContent = (preview.invited_by ? preview.invited_by + ' invited you' : 'You were invited')
+    + ' as ' + preview.role + ' at ' + preview.email + '. Set a password here to sign in — you do not use the owner’s login.';
+
+  async function goToProject(projectId) {
+    location.href = 'project.html?id=' + projectId;
+  }
+
+  async function acceptWhileLoggedIn() {
+    const data = await Api.post('/api/auth/invites/accept/', { token });
+    await goToProject(data.project_id);
+  }
+
+  if (Api.getAccessToken()) {
+    try {
+      const me = await Api.get('/api/auth/me/');
+      const email = (me.user && me.user.email || '').toLowerCase();
+      if (email === (preview.email || '').toLowerCase()) {
+        try {
+          await acceptWhileLoggedIn();
+          return;
+        } catch (e) {
+          message.textContent = e.message || 'Could not join with this session.';
+        }
+      } else {
+        message.textContent = 'This browser is signed in as ' + email
+          + '. Log out first, then create the login for ' + preview.email + '.';
+        forms.innerHTML = '<button class="btn btn-primary btn-block" type="button" id="logout-wrong">Log out and continue</button>';
+        document.getElementById('logout-wrong').addEventListener('click', () => {
+          Api.clearTokens();
+          location.reload();
+        });
+        return;
+      }
+    } catch (e) {
+      Api.clearTokens();
+    }
+  }
+
+  if (preview.account_exists) {
+    forms.innerHTML = `
+      <p class="text-dim mb-16">This email already has a SecureScan account. Log in to join the project.</p>
+      <form id="invite-login-form">
+        <div class="form-group"><label>Email</label><input value="${Utils.escapeHtml(preview.email)}" disabled></div>
+        <div class="form-group"><label for="password">Password</label><input id="password" type="password" required autocomplete="current-password"></div>
+        <button class="btn btn-primary btn-block" type="submit" id="invite-login-btn">Log in and join</button>
+      </form>
+      <p class="mt-16" style="font-size:13.5px;"><a href="forgot-password.html">Forgot password?</a></p>
+    `;
+    document.getElementById('invite-login-form').addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const btn = document.getElementById('invite-login-btn');
+      btn.disabled = true;
+      try {
+        const data = await Api.post('/api/auth/login/', {
+          username: preview.email,
+          password: document.getElementById('password').value,
+        });
+        Api.setTokens(data.access, data.refresh);
+        await acceptWhileLoggedIn();
+      } catch (e) {
+        Toast.error(e.message || 'Login failed.');
+        btn.disabled = false;
+      }
+    });
+    return;
+  }
+
+  const suggested = (preview.email.split('@')[0] || 'developer').replace(/[^a-zA-Z0-9._-]/g, '');
+  forms.innerHTML = `
+    <form id="invite-join-form">
+      <div class="form-group"><label>Email</label><input value="${Utils.escapeHtml(preview.email)}" disabled></div>
+      <div class="form-group"><label for="username">Username</label><input id="username" value="${Utils.escapeHtml(suggested)}" required></div>
+      <div class="form-group">
+        <label for="password">Choose a password</label>
+        <input id="password" type="password" required autocomplete="new-password">
+        <div class="help-text">At least 10 characters, with uppercase, lowercase, a digit, and a special character.</div>
+      </div>
+      <div class="form-group"><label for="password_confirm">Confirm password</label><input id="password_confirm" type="password" required autocomplete="new-password"></div>
+      <button class="btn btn-primary btn-block" type="submit" id="invite-join-btn">Create login and join</button>
+    </form>
+  `;
+  document.getElementById('invite-join-form').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const password = document.getElementById('password').value;
+    const confirm = document.getElementById('password_confirm').value;
+    if (password !== confirm) {
+      Toast.error('Passwords do not match.');
+      return;
+    }
+    const btn = document.getElementById('invite-join-btn');
+    btn.disabled = true;
+    try {
+      const data = await Api.post('/api/auth/invites/join/', {
+        token,
+        username: document.getElementById('username').value.trim(),
+        password,
+      });
+      Api.setTokens(data.access, data.refresh);
+      Toast.success('You are signed in as ' + preview.role + '.');
+      await goToProject(data.project_id);
+    } catch (e) {
+      Toast.error(e.message || 'Could not create your login.');
+      btn.disabled = false;
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile - SecureScan</title>
+<link rel="stylesheet" href="assets/css/main.css?v=soc4">
+</head>
+<body>
+<div class="app-shell">
+  <div class="app-main">
+    <header class="app-topbar" id="app-topbar"></header>
+    <main class="main-content">
+      <p class="hud-kicker">Operator</p>
+      <h1>Profile &amp; Settings</h1>
+      <p class="text-dim mb-24">Manage your account details and security preferences.</p>
+
+      <div class="stat-grid" style="grid-template-columns:1fr 1fr; align-items:start;">
+        <div class="card">
+          <h3>Profile</h3>
+          <div class="form-group mt-16"><label for="p-first-name">First name</label><input id="p-first-name"></div>
+          <div class="form-group"><label for="p-last-name">Last name</label><input id="p-last-name"></div>
+          <div class="form-group"><label for="p-email">Email</label><input id="p-email" type="email"></div>
+          <div class="form-group"><label for="p-org">Organization</label><input id="p-org"></div>
+          <div class="form-group"><label>Role</label><input id="p-role" disabled></div>
+          <button class="btn btn-primary" id="save-profile-btn">Save Profile</button>
+        </div>
+
+        <div class="card">
+          <h3>Change Password</h3>
+          <div class="form-group mt-16"><label for="old-password">Current password</label><input id="old-password" type="password"></div>
+          <div class="form-group"><label for="new-password">New password</label><input id="new-password" type="password"></div>
+          <div class="form-group"><label for="new-password-confirm">Confirm new password</label><input id="new-password-confirm" type="password"></div>
+          <button class="btn btn-primary" id="change-password-btn">Change Password</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/notifications.js"></script>
+<script src="assets/js/auth.js?v=net1"></script>
+<script>
+(async function () {
+  const user = await Auth.initAuthenticatedPage('profile.html');
+  if (!user) return;
+  document.getElementById('p-first-name').value = user.first_name || '';
+  document.getElementById('p-last-name').value = user.last_name || '';
+  document.getElementById('p-email').value = user.email || '';
+  document.getElementById('p-org').value = user.organization || '';
+  document.getElementById('p-role').value = user.role;
+
+  document.getElementById('save-profile-btn').addEventListener('click', async () => {
+    try {
+      await Api.patch('/api/auth/me/', {
+        first_name: document.getElementById('p-first-name').value,
+        last_name: document.getElementById('p-last-name').value,
+        email: document.getElementById('p-email').value,
+        organization: document.getElementById('p-org').value,
+      });
+      Toast.success('Profile updated.');
+    } catch (e) { Toast.error(e.message || 'Failed to update profile.'); }
+  });
+
+  document.getElementById('change-password-btn').addEventListener('click', async () => {
+    const newPw = document.getElementById('new-password').value;
+    const confirmPw = document.getElementById('new-password-confirm').value;
+    if (newPw !== confirmPw) { Toast.error('New passwords do not match.'); return; }
+    try {
+      await Api.post('/api/auth/change-password/', {
+        old_password: document.getElementById('old-password').value,
+        new_password: newPw, new_password_confirm: confirmPw,
+      });
+      Toast.success('Password changed.');
+      document.getElementById('old-password').value = '';
+      document.getElementById('new-password').value = '';
+      document.getElementById('new-password-confirm').value = '';
+    } catch (e) { Toast.error(e.message || 'Failed to change password.'); }
+  });
+})();
+</script>
+</body>
+</html>

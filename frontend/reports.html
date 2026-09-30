@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reports - SecureScan</title>
+<link rel="stylesheet" href="assets/css/main.css?v=soc4">
+</head>
+<body>
+<div class="app-shell">
+  <div class="app-main">
+    <header class="app-topbar" id="app-topbar"></header>
+    <main class="main-content">
+      <p class="hud-kicker">Exports</p>
+      <h1>Reports</h1>
+      <p class="text-dim mb-24">Generate and download JSON/PDF security reports for any scan.</p>
+
+      <div class="card mb-24">
+        <h3>Generate a Report</h3>
+        <div class="form-row mt-16">
+          <div class="form-group"><label for="report-scan-select">Scan</label><select id="report-scan-select"><option value="">Loading scans...</option></select></div>
+          <div class="form-group"><label for="report-type-select">Format</label><select id="report-type-select"><option value="pdf" selected>PDF</option><option value="json">JSON</option></select></div>
+        </div>
+        <button class="btn btn-primary" id="generate-report-btn">Generate Report</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Project</th><th>Type</th><th>Status</th><th>Created</th><th></th></tr></thead>
+          <tbody id="reports-body"><tr><td colspan="6" class="text-dim">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/notifications.js"></script>
+<script src="assets/js/auth.js?v=net1"></script>
+<script src="assets/js/reports.js?v=3"></script>
+</body>
+</html>

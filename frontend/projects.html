@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects - SecureScan</title>
+<link rel="stylesheet" href="assets/css/main.css?v=soc4">
+</head>
+<body>
+<div class="app-shell">
+  <div class="app-main">
+    <header class="app-topbar" id="app-topbar"></header>
+    <main class="main-content">
+      <div class="flex justify-between items-center mb-24">
+      <div><h1>Projects</h1><p class="hud-kicker">Workspace</p><p class="text-dim">Manage the codebases you're scanning.</p></div>
+        <button class="btn btn-primary" id="new-project-btn">+ New Project</button>
+      </div>
+
+      <div id="pending-invites" class="mb-24" style="display:none;"></div>
+
+      <div class="table-toolbar">
+        <input id="search-input" placeholder="Search projects..." style="max-width:280px;">
+        <div class="spacer"></div>
+      </div>
+
+      <div id="projects-grid" class="stat-grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr));">
+        <div class="card skeleton" style="height:140px;"></div>
+        <div class="card skeleton" style="height:140px;"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="new-project-modal">
+  <div class="modal">
+    <div class="modal-header"><h3>New Project</h3><button class="icon-btn" id="close-modal">✕</button></div>
+    <div class="modal-body">
+      <form id="new-project-form">
+        <div class="form-group"><label for="p-name">Project name</label><input id="p-name" required></div>
+        <div class="form-group"><label for="p-description">Description</label><textarea id="p-description" rows="3"></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label for="p-language">Primary language</label><input id="p-language" placeholder="e.g. Python"></div>
+          <div class="form-group"><label for="p-branch">Default branch</label><input id="p-branch" value="main"></div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" id="cancel-modal">Cancel</button>
+      <button class="btn btn-primary" id="submit-new-project">Create Project</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/notifications.js"></script>
+<script src="assets/js/auth.js?v=net1"></script>
+<script src="assets/js/projects.js?v=2"></script>
+</body>
+</html>

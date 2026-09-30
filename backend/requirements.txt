@@ -1,0 +1,41 @@
+# ---- Core application (mandatory) ----
+Django==4.2.16
+djangorestframework==3.15.2
+djangorestframework-simplejwt==5.3.1
+django-cors-headers==4.4.0
+django-filter==24.3
+# MySQL driver: PyMySQL is pure-Python (no C compiler / MySQL headers
+# needed), which keeps setup painless on Windows. It's activated via the
+# shim in config/__init__.py. If you prefer mysqlclient (faster, used by
+# many production deployments) on Linux, install it separately - it isn't
+# required.
+PyMySQL==1.1.1
+python-dotenv==1.0.1
+celery==5.4.0
+redis==5.0.8
+django-celery-results==2.5.1
+django-celery-beat==2.7.0
+reportlab==4.2.5
+GitPython==3.1.43
+drf-spectacular==0.27.2
+gunicorn==23.0.0
+whitenoise==6.7.0
+django-ratelimit==4.1.0
+
+# ---- Optional scanner integrations ----
+# These are external, independently-installed CLI tools, not python
+# packages required by the web app. The scanner manager auto-detects
+# their presence and degrades gracefully if absent. See docs/SCANNERS.md
+#   semgrep     -> `pip install semgrep` (Linux/macOS; limited Windows support)
+#   bandit      -> included below (pure python, works everywhere)
+#   pip-audit   -> included below (pure python, works everywhere)
+#   checkov     -> `pip install checkov`
+#   gitleaks    -> standalone Go binary, https://github.com/gitleaks/gitleaks/releases
+#   trivy       -> standalone Go binary, https://github.com/aquasecurity/trivy/releases
+bandit==1.7.10
+pip-audit==2.7.3
+
+# ---- Testing ----
+pytest==8.3.3
+pytest-django==4.9.0
+factory-boy==3.3.1

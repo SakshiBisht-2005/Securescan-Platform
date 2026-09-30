@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log In - SecureScan</title>
+<link rel="stylesheet" href="assets/css/main.css?v=soc3">
+</head>
+<body>
+<div class="auth-stage">
+  <div class="auth-visual">
+    <img class="float-3d" src="assets/img/securescan-node-3d.png" alt="SecureScan 3D security node" style="width:min(340px,80%);">
+    <h2 class="text-3d" style="margin:0;">Protected workspace</h2>
+    <p>Encrypted session, project-scoped access, and scans that never execute your code.</p>
+  </div>
+  <div class="auth-card tilt-3d">
+    <div class="logo-row"><img class="logo-3d" src="assets/img/securescan-shield-3d.png" alt="" width="28" height="28"> SecureScan</div>
+    <p class="hud-kicker">Access</p>
+    <h2>Log in</h2>
+    <p class="text-dim mb-16">Log in to your security dashboard.</p>
+    <form id="login-form">
+      <div class="form-group">
+        <label for="username">Username or email</label>
+        <input id="username" name="username" required autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" required autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary btn-block" type="submit" id="login-btn">Log In</button>
+    </form>
+    <div class="flex justify-between mt-16" style="font-size:13.5px;">
+      <a href="forgot-password.html">Forgot password?</a>
+      <a href="register.html" id="register-link">Create an account</a>
+    </div>
+  </div>
+</div>
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/notifications.js"></script>
+<script>
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true; btn.textContent = 'Logging in...';
+  try {
+    const data = await Api.post('/api/auth/login/', {
+      username: document.getElementById('username').value.trim(),
+      password: document.getElementById('password').value,
+    });
+    Api.setTokens(data.access, data.refresh);
+    const next = Utils.safeInternalPath(Utils.getQueryParam('next'));
+    location.href = next || 'dashboard.html';
+  } catch (err) {
+    Toast.error(err.message || 'Login failed.');
+    btn.disabled = false; btn.textContent = 'Log In';
+  }
+});
+(function () {
+  const next = Utils.getQueryParam('next');
+  if (!next) return;
+  const link = document.getElementById('register-link');
+  if (link) link.href = 'register.html?next=' + encodeURIComponent(next);
+})();
+</script>
+</body>
+</html>

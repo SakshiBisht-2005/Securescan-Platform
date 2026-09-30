@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - SecureScan</title>
+<link rel="stylesheet" href="assets/css/main.css?v=soc4">
+</head>
+<body>
+<div class="app-shell">
+  <div class="app-main">
+    <header class="app-topbar" id="app-topbar"></header>
+    <main class="main-content">
+      <div class="dash-hero">
+        <div>
+          <p class="hud-kicker">Command center</p>
+          <h1 class="text-3d">Security Dashboard</h1>
+          <p class="text-dim">Overview across all your projects.</p>
+          <a href="projects.html" class="btn btn-primary mt-16">+ New Project</a>
+        </div>
+        <img src="assets/img/securescan-shield-3d.png" alt="" width="180" height="180">
+      </div>
+
+      <div class="stat-grid mb-24" id="summary-stats">
+        <div class="card skeleton" style="height:90px;"></div>
+        <div class="card skeleton" style="height:90px;"></div>
+        <div class="card skeleton" style="height:90px;"></div>
+        <div class="card skeleton" style="height:90px;"></div>
+      </div>
+
+      <div class="stat-grid mb-24">
+        <div class="stat-card critical"><div class="stat-label">Critical</div><div class="stat-value" id="stat-critical">-</div></div>
+        <div class="stat-card high"><div class="stat-label">High</div><div class="stat-value" id="stat-high">-</div></div>
+        <div class="stat-card medium"><div class="stat-label">Medium</div><div class="stat-value" id="stat-medium">-</div></div>
+        <div class="stat-card low"><div class="stat-label">Low</div><div class="stat-value" id="stat-low">-</div></div>
+      </div>
+
+      <div class="card mb-24">
+        <div class="card-header"><h3>Security Score Trend</h3></div>
+        <canvas id="trend-chart" height="90"></canvas>
+        <div class="text-faint mt-8" id="trend-empty" style="display:none;">Run more scans to see your trend over time.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3>Latest Scans</h3><a href="projects.html" class="text-dim" style="font-size:13px;">View all projects →</a></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Project</th><th>Status</th><th>Score</th><th>Findings</th><th>When</th></tr></thead>
+            <tbody id="latest-scans-body"><tr><td colspan="5" class="text-dim">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/notifications.js"></script>
+<script src="assets/js/auth.js?v=net1"></script>
+<script src="assets/js/dashboard.js?v=4"></script>
+</body>
+</html>
