@@ -26,13 +26,19 @@
 
   function bind() {
     if (document.querySelector('.editor-app')) return;
-    document.querySelectorAll('.stat-card, .feature-card, .tilt-3d').forEach(attachTilt);
+    document.querySelectorAll('.stat-card, .feature-card, .tilt-3d, .mode-card').forEach(attachTilt);
   }
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', bind);
   } else {
     bind();
+  }
+  if (!document.querySelector('.scanline')) {
+    const scan = document.createElement('div');
+    scan.className = 'scanline';
+    scan.setAttribute('aria-hidden', 'true');
+    document.body.prepend(scan);
   }
   const mo = new MutationObserver(bind);
   mo.observe(document.body, { childList: true, subtree: true });

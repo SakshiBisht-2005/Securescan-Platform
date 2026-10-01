@@ -12,6 +12,6 @@ node_modules/
 scan_temp/
 *.sqlite3
 .pytest_cache/
-.coverage
+.cache/
 htmlcov/
 db.sqlite3

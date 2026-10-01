@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "apps.dashboard",
     "apps.audit",
     "apps.network",
+    "apps.assessments",
 ]
 
 MIDDLEWARE = [
@@ -173,6 +174,7 @@ REST_FRAMEWORK = {
         "scan": "30/hour",
         "report": "60/hour",
         "network": "40/hour",
+        "assessments": "30/hour",
     },
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }

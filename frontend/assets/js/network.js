@@ -3,6 +3,17 @@
   const user = await Auth.initAuthenticatedPage('network.html');
   if (!user) return;
 
+  const toolSel = document.getElementById('net-tool');
+  function showTool(id) {
+    document.querySelectorAll('.net-panel').forEach((el) => {
+      el.hidden = el.dataset.tool !== id;
+    });
+  }
+  if (toolSel) {
+    showTool(toolSel.value);
+    toolSel.addEventListener('change', () => showTool(toolSel.value));
+  }
+
   function dump(obj) {
     return Utils.escapeHtml(JSON.stringify(obj, null, 2));
   }

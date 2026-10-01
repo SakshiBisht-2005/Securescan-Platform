@@ -4,7 +4,8 @@
  * envelope, and consistent error surfacing. No other module should call
  * fetch() directly against the backend.
  */
-const API_BASE = (window.SECURESCAN_API_BASE || (location.origin.replace(/:\d+$/, ':8000')));
+const API_BASE = window.SECURESCAN_API_BASE || location.origin;
+// Same origin as the UI (port 5500 proxies /api to Django). Optional api-config.js override.
 
 const TOKEN_KEY = 'securescan_access_token';
 const REFRESH_KEY = 'securescan_refresh_token';
@@ -42,6 +43,7 @@ const Api = (() => {
       || path.startsWith('/api/auth/password-reset/')
       || path.startsWith('/api/auth/invites/preview/')
       || path.startsWith('/api/auth/invites/join/')
+      || path.startsWith('/api/health/')
     );
   }
 
@@ -51,11 +53,30 @@ const Api = (() => {
     if (token && !isPublicAuthPath(path)) headers['Authorization'] = `Bearer ${token}`;
     if (!isForm) headers['Content-Type'] = 'application/json';
 
-    const res = await fetch(`${API_BASE}${path}`, {
-      method,
-      headers,
-      body: body ? (isForm ? body : JSON.stringify(body)) : undefined,
-    });
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 45000);
+    let res;
+    try {
+      res = await fetch(`${API_BASE}${path}`, {
+        method,
+        headers,
+        body: body ? (isForm ? body : JSON.stringify(body)) : undefined,
+        signal: ctrl.signal,
+      });
+    } catch (e) {
+      clearTimeout(timer);
+      if (retry && method === 'GET') {
+        return request(path, { method, body, isForm, retry: false });
+      }
+      const err = new Error(
+        e.name === 'AbortError'
+          ? 'The API timed out. Keep python start.py running and try again.'
+          : 'Cannot reach the API. Keep start.py open. On Cloudflare, use the Public site URL from that window.'
+      );
+      err.status = 0;
+      throw err;
+    }
+    clearTimeout(timer);
 
     if (res.status === 401 && retry && getRefreshToken() && !isPublicAuthPath(path)) {
       try {

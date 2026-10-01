@@ -9,7 +9,7 @@
   let project = null;
 
   function apiBaseUrl() {
-    return window.SECURESCAN_API_BASE || location.origin.replace(/:\d+$/, ':8000');
+    return window.SECURESCAN_API_BASE || location.origin;
   }
 
   function ciSnippet(apiBase, id) {

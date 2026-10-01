@@ -4,12 +4,21 @@
   const user = await Auth.initAuthenticatedPage('dashboard.html');
   if (!user) return;
 
+  const go = document.getElementById('dash-go');
+  if (go) {
+    go.addEventListener('change', () => {
+      if (go.value) location.href = go.value;
+    });
+  }
+
   try {
     const summary = await Api.get('/api/dashboard/summary/');
     renderSummary(summary);
     renderLatestScans(summary.latest_scans);
   } catch (e) {
     Toast.error('Failed to load dashboard summary.');
+    const box = document.getElementById('summary-stats');
+    if (box) box.innerHTML = `<div class="card" style="grid-column:1/-1;"><p class="terminal-log">${Utils.escapeHtml(e.message || 'Could not load metrics.')}</p></div>`;
   }
 
   try {

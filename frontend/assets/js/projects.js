@@ -4,12 +4,29 @@
   if (!user) return;
 
   let allProjects = [];
+  let query = '';
+
+  function sorted(list) {
+    const mode = document.getElementById('sort-projects')?.value || 'updated';
+    const copy = list.slice();
+    if (mode === 'name') copy.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    else if (mode === 'status') copy.sort((a, b) => (a.latest_scan_status || '').localeCompare(b.latest_scan_status || ''));
+    else copy.sort((a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0));
+    return copy;
+  }
+
+  function applyFilters() {
+    const filtered = allProjects.filter((p) =>
+      p.name.toLowerCase().includes(query) || (p.description || '').toLowerCase().includes(query)
+    );
+    render(sorted(filtered));
+  }
 
   async function load() {
     try {
       const data = await Api.get('/api/projects/?page_size=100');
       allProjects = data.results;
-      render(allProjects);
+      applyFilters();
     } catch (e) {
       Toast.error('Failed to load projects.');
     }
@@ -41,9 +58,10 @@
   }
 
   document.getElementById('search-input').addEventListener('input', Utils.debounce((e) => {
-    const q = e.target.value.toLowerCase();
-    render(allProjects.filter((p) => p.name.toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q)));
+    query = e.target.value.toLowerCase();
+    applyFilters();
   }, 250));
+  document.getElementById('sort-projects')?.addEventListener('change', applyFilters);
 
   const modal = document.getElementById('new-project-modal');
   document.getElementById('new-project-btn').addEventListener('click', () => modal.classList.add('open'));

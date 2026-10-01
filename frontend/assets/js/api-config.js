@@ -1,0 +1,1 @@
+window.SECURESCAN_API_BASE = "";

@@ -102,6 +102,6 @@ const Utils = (() => {
 Utils.initTheme();
 (function loadUiFx() {
   const s = document.createElement('script');
-  s.src = 'assets/js/ui-fx.js';
+  s.src = 'assets/js/ui-fx.js?v=ops1';
   (document.body || document.head).appendChild(s);
 })();

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assessments - SecureScan</title>
+<link rel="stylesheet" href="assets/css/main.css?v=ops1">
+</head>
+<body>
+<div class="app-shell">
+  <div class="app-main">
+    <header class="app-topbar" id="app-topbar"></header>
+    <main class="main-content">
+      <p class="hud-kicker">Authorized testing</p>
+      <h1 class="hud-title">Assessments</h1>
+      <p class="text-dim mb-16">Choose a test type from the menu. Live checks only run on public URLs you confirm you operate. Full SAST/SCA stays in Projects.</p>
+      <div class="card mb-24" id="api-health">Checking API…</div>
+      <div class="card workbench mb-24">
+        <div class="workbench-toolbar">
+          <div class="select-shell">
+            <label for="mode-select">Assessment type</label>
+            <select id="mode-select"><option value="">Select a test…</option></select>
+          </div>
+          <p class="text-dim" id="run-blurb" style="margin:0;">Pick a mode to load the matching form.</p>
+        </div>
+        <form id="run-form" class="assess-form mt-16" hidden>
+          <h3 id="run-title" class="mb-16">Run</h3>
+          <div id="run-fields"></div>
+          <label class="text-dim mt-16" id="own-wrap" style="display:none;gap:8px;align-items:flex-start;">
+            <input type="checkbox" name="confirm_owned">
+            <span>I own this target or have written authorization to test it.</span>
+          </label>
+          <button class="btn btn-primary mt-16" type="submit" id="run-btn" disabled>Run assessment</button>
+        </form>
+      </div>
+      <div id="run-result"></div>
+    </main>
+  </div>
+</div>
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/api-config.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/notifications.js"></script>
+<script src="assets/js/auth.js?v=ops1"></script>
+<script src="assets/js/assessments.js?v=ops1"></script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Projects - SecureScan</title>
-<link rel="stylesheet" href="assets/css/main.css?v=soc4">
+<link rel="stylesheet" href="assets/css/main.css?v=ops1">
 </head>
 <body>
 <div class="app-shell">
@@ -20,6 +20,14 @@
       <div class="table-toolbar">
         <input id="search-input" placeholder="Search projects..." style="max-width:280px;">
         <div class="spacer"></div>
+        <div class="select-shell inline">
+          <label class="sr-only" for="sort-projects">Sort</label>
+          <select id="sort-projects">
+            <option value="updated">Recently updated</option>
+            <option value="name">Name A–Z</option>
+            <option value="status">Scan status</option>
+          </select>
+        </div>
       </div>
 
       <div id="projects-grid" class="stat-grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr));">
@@ -38,7 +46,22 @@
         <div class="form-group"><label for="p-name">Project name</label><input id="p-name" required></div>
         <div class="form-group"><label for="p-description">Description</label><textarea id="p-description" rows="3"></textarea></div>
         <div class="form-row">
-          <div class="form-group"><label for="p-language">Primary language</label><input id="p-language" placeholder="e.g. Python"></div>
+          <div class="form-group"><label for="p-language">Primary language</label>
+            <select id="p-language">
+              <option value="">Select language</option>
+              <option>Python</option>
+              <option>JavaScript</option>
+              <option>TypeScript</option>
+              <option>Java</option>
+              <option>Go</option>
+              <option>PHP</option>
+              <option>Ruby</option>
+              <option>C#</option>
+              <option>Kotlin</option>
+              <option>Rust</option>
+              <option>Other</option>
+            </select>
+          </div>
           <div class="form-group"><label for="p-branch">Default branch</label><input id="p-branch" value="main"></div>
         </div>
       </form>
@@ -51,9 +74,10 @@
 </div>
 
 <script src="assets/js/utils.js"></script>
+<script src="assets/js/api-config.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/notifications.js"></script>
-<script src="assets/js/auth.js?v=net1"></script>
+<script src="assets/js/auth.js?v=ops1"></script>
 <script src="assets/js/projects.js?v=2"></script>
 </body>
 </html>

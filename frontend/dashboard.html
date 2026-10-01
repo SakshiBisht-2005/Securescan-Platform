@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard - SecureScan</title>
-<link rel="stylesheet" href="assets/css/main.css?v=soc4">
+<link rel="stylesheet" href="assets/css/main.css?v=ops1">
 </head>
 <body>
 <div class="app-shell">
@@ -13,9 +13,22 @@
       <div class="dash-hero">
         <div>
           <p class="hud-kicker">Command center</p>
-          <h1 class="text-3d">Security Dashboard</h1>
+          <h1 class="hud-title">Security Dashboard</h1>
           <p class="text-dim">Overview across all your projects.</p>
-          <a href="projects.html" class="btn btn-primary mt-16">+ New Project</a>
+          <div class="cta-cluster">
+            <div class="select-shell inline">
+              <label class="sr-only" for="dash-go">Quick action</label>
+              <select id="dash-go">
+                <option value="">Quick action…</option>
+                <option value="projects.html">Open projects</option>
+                <option value="assessments.html">Run assessment</option>
+                <option value="vulnerabilities.html">View findings</option>
+                <option value="reports.html">Generate report</option>
+                <option value="network.html">Network lab</option>
+              </select>
+            </div>
+            <a href="projects.html" class="btn btn-primary">New project</a>
+          </div>
         </div>
         <img src="assets/img/securescan-shield-3d.png" alt="" width="180" height="180">
       </div>
@@ -53,9 +66,10 @@
   </div>
 </div>
 <script src="assets/js/utils.js"></script>
+<script src="assets/js/api-config.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/notifications.js"></script>
-<script src="assets/js/auth.js?v=net1"></script>
+<script src="assets/js/auth.js?v=ops1"></script>
 <script src="assets/js/dashboard.js?v=4"></script>
 </body>
 </html>
